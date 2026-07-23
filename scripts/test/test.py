@@ -1,4 +1,5 @@
 import os
+
 # import sys
 # sys.path.append('/path/to/your/project/folder')
 # maybe occur path error, comment above codes to solve
@@ -9,9 +10,10 @@ from pytorch_lightning import Trainer, seed_everything
 
 seed_everything(7)
 
+
 def main(version: str, test_year: str):
     # generate output latex in result.zip
-    ckp_folder = os.path.join("lightning_logs", f"version_{version}", "checkpoints")
+    ckp_folder = os.path.join("checkpoints")
     fnames = os.listdir(ckp_folder)
     assert len(fnames) == 1
     ckp_path = os.path.join(ckp_folder, fnames[0])

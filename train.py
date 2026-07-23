@@ -4,6 +4,8 @@ from pytorch_lightning.utilities.cli import LightningCLI
 from comer.datamodule import CROHMEDatamodule
 from comer.lit_comer import LitCoMER
 
+import torch
+
 cli = LightningCLI(
     LitCoMER,
     CROHMEDatamodule,
