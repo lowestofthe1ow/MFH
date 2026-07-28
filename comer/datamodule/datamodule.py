@@ -1,7 +1,6 @@
 import os
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
-from zipfile import ZipFile
 
 import numpy as np
 import pytorch_lightning as pl
@@ -15,7 +14,7 @@ from .vocab import vocab
 
 Data = List[Tuple[str, Image.Image, List[str]]]
 
-MAX_SIZE = 32e4  # change here accroading to your GPU memory
+MAX_SIZE = 24e4  # change here according to your GPU memory
 
 
 # load data
@@ -77,30 +76,48 @@ def data_iterator(
     return list(zip(fname_total, feature_total, label_total))
 
 
-def extract_data(archive: ZipFile, dir_name: str) -> Data:
-    """Extract all data need for a dataset from zip archive
-
+def extract_data_from_dir(base_dir: str) -> Data:
+    """Extracts all data needed for a dataset directly from an unzipped local directory.
+    
     Args:
-        archive (ZipFile):
-        dir_name (str): dir name in archive zip (eg: train, test_2014......)
-
+        base_dir (str): Path to the folder containing caption.txt and image assets
+        
     Returns:
         Data: list of tuple of image and formula
     """
-    with archive.open(f"data/{dir_name}/caption.txt", "r") as f:
+    caption_path = os.path.join(base_dir, "caption.txt")
+    if not os.path.exists(caption_path):
+        raise FileNotFoundError(f"Missing caption.txt inside directory: {base_dir}")
+
+    with open(caption_path, "r", encoding="utf-8") as f:
         captions = f.readlines()
+        
     data = []
     for line in captions:
-        tmp = line.decode().strip().split()
+        line_str = line.strip()
+        if not line_str:
+            continue
+            
+        tmp = line_str.split()
         img_name = tmp[0]
         formula = tmp[1:]
-        with archive.open(f"data/{dir_name}/img/{img_name}.bmp", "r") as f:
-            # move image to memory immediately, avoid lazy loading, which will lead to None pointer error in loading
-            img = Image.open(f).copy()
+        
+        # Look for loose images (your split folder) or nested structures (data/2014/img/)
+        img_path = os.path.join(base_dir, f"{img_name}.bmp")
+        if not os.path.exists(img_path):
+            img_path = os.path.join(base_dir, "img", f"{img_name}.bmp")
+            
+        if not os.path.exists(img_path):
+            print(f"Warning: Image file {img_name}.bmp missing from {base_dir}. Skipping.")
+            continue
+            
+        # Move image data to memory immediately to avoid lazy loading errors
+        with Image.open(img_path) as img_file:
+            img = img_file.copy()
+            
         data.append((img_name, img, formula))
 
-    print(f"Extract data from: {dir_name}, with data size: {len(data)}")
-
+    print(f"Extract data from folder: {base_dir}, with data size: {len(data)}")
     return data
 
 
@@ -156,16 +173,16 @@ def collate_fn(batch):
     return Batch(fnames, x, x_mask, seqs_y, x_dct)
 
 
-def build_dataset(archive, folder: str, batch_size: int):
-    data = extract_data(archive, folder)
+def build_dataset_unzipped(folder_path: str, batch_size: int):
+    data = extract_data_from_dir(folder_path)
     return data_iterator(data, batch_size)
 
 
 class CROHMEDatamodule(pl.LightningDataModule):
     def __init__(
             self,
-            zipfile_path: str = f"{os.path.dirname(os.path.realpath(__file__))}/../../data.zip",
-            test_year: str = "2014",
+            train_dir: str,   # CHANGED: pass train folder
+            val_dir: str,     # CHANGED: pass test/val folder
             train_batch_size: int = 8,
             eval_batch_size: int = 4,
             num_workers: int = 5,
@@ -173,40 +190,31 @@ class CROHMEDatamodule(pl.LightningDataModule):
             scale_aug: bool = False,
     ) -> None:
         super().__init__()
-        assert isinstance(test_year, str)
-        self.zipfile_path = zipfile_path
-        self.test_year = test_year
+        self.train_dir = train_dir
+        self.val_dir = val_dir
         self.train_batch_size = train_batch_size
         self.eval_batch_size = eval_batch_size
         self.num_workers = num_workers
         self.freq_remove_num = freq_remove_num
         self.scale_aug = scale_aug
 
-        print(f"Load data from: {self.zipfile_path}")
-
     def setup(self, stage: Optional[str] = None) -> None:
-        with ZipFile(self.zipfile_path) as archive:
-            if stage == "fit" or stage is None:
-                self.train_dataset = CROHMEDataset(
-                    build_dataset(archive, "train", self.train_batch_size),
-                    True,
-                    self.scale_aug,
-                    self.freq_remove_num
-                )
-                self.val_dataset = CROHMEDataset(
-                    build_dataset(archive, self.test_year, self.eval_batch_size),
-                    False,
-                    self.scale_aug,
-                    self.freq_remove_num
-                )
-            if stage == "test" or stage is None:
-                self.test_dataset = CROHMEDataset(
-                    build_dataset(archive, self.test_year, self.eval_batch_size),
-                    False,
-                    self.scale_aug,
-                    self.freq_remove_num
-                )
-
+        if stage == "fit" or stage is None:
+            self.train_dataset = CROHMEDataset(
+                build_dataset_unzipped(self.train_dir, self.train_batch_size),
+                True, self.scale_aug, self.freq_remove_num
+            )
+            # Now uses the author's specific test set for validation
+            self.val_dataset = CROHMEDataset(
+                build_dataset_unzipped(self.val_dir, self.eval_batch_size),
+                False, self.scale_aug, self.freq_remove_num
+            )
+        if stage == "test" or stage is None:
+            self.test_dataset = CROHMEDataset(
+                build_dataset_unzipped(self.val_dir, self.eval_batch_size),
+                False, self.scale_aug, self.freq_remove_num
+            )
+            
     def train_dataloader(self):
         return DataLoader(
             self.train_dataset,
@@ -221,7 +229,7 @@ class CROHMEDatamodule(pl.LightningDataModule):
             shuffle=False,
             num_workers=self.num_workers,
             collate_fn=collate_fn,
-        ),
+        )
 
     def test_dataloader(self):
         return DataLoader(
