@@ -1,7 +1,0 @@
-equations_1_60 \frac { 1 } { 1 - x } = \sum _ { n = 0 } ^ \infty x ^ n
-equations_1_55 \sqrt { a + 2 \sqrt { b } } = \sqrt { x } + \sqrt { y }
-equations_1_65 \gamma = \frac { 1 } { \sqrt { 1 - \frac { v ^ 2 } { c ^ 2 } } }
-equations_1_45 1 + \frac { 1 } { 1 + \frac { 1 } { 2 } } = \frac { 5 } { 3 }
-equations_1_51 \sqrt { \frac { x ^ 2 - 1 } { x ^ 2 + 1 } }
-equations_1_42 \sqrt { \frac { a + b } { c } }
-equations_1_10 \sin ( x )
