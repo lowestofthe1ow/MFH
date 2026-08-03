@@ -133,3 +133,7 @@ Results_pred_symlg
 *.tfevents.*
 
 maml_checkpoints/
+
+# TODO: This is temporary for now
+data/custom/author_0/digital/splits/
+data/custom/author_0/physical/splits/
