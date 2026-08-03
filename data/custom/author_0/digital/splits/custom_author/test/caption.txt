@@ -1,0 +1,59 @@
+equations_1_31 \sqrt { 2 x + 5 } = 7
+equations_1_22 \frac { a + b } { 2 }
+equations_1_29 \frac { x ^ 2 - 4 } { x - 2 }
+equations_1_01 3 y
+equations_1_70 H ( p ) = - \sum _ { i = 1 } ^ n p _ i \log _ 2 ( p _ i )
+equations_1_28 a ^ 2 + b ^ 2 = c ^ 2
+equations_1_24 \sqrt { a ^ 2 + b ^ 2 }
+equations_1_11 \cos ( \theta )
+equations_1_67 \frac { \tan x + \tan y } { 1 - \tan x \tan y } = \tan ( x + y )
+equations_1_20 \frac { 1 } { 2 }
+equations_1_23 \sqrt { x }
+equations_1_30 \frac { 1 } { x + 1 } + \frac { 1 } { x - 1 }
+equations_1_39 \sum _ { k = 1 } ^ n k
+equations_1_53 \frac { \frac { a } { b } + \frac { c } { d } } { \frac { a } { b } - \frac { c } { d } }
+equations_1_21 \frac { x } { y }
+equations_1_33 \log _ 2 ( x ) + \log _ 2 ( y )
+equations_1_17 E = m c ^ 2
+equations_1_61 \cos ( x ) = \sum _ { n = 0 } ^ \infty \frac { ( - 1 ) ^ n x ^ { 2 n } } { ( 2 n ) ! }
+equations_1_34 e ^ { 2 x } - 3 e ^ x + 2 = 0
+equations_1_48 \frac { d ^ 2 y } { d x ^ 2 } + 4 y = 0
+equations_1_66 \frac { a } { \sin A } = \frac { b } { \sin B } = \frac { c } { \sin C }
+equations_1_56 \frac { 1 } { \sqrt { x + 1 } + \sqrt { x } }
+equations_1_18 F = m a
+equations_1_08 5 ( a + b )
+equations_1_52 \frac { a + \sqrt { b } } { c - \sqrt { d } }
+equations_1_59 r = \sqrt { x ^ 2 + y ^ 2 + z ^ 2 }
+equations_1_47 \sqrt { 1 + \sqrt { 1 + x } }
+equations_1_43 \frac { \sqrt { x + h } - \sqrt { x } } { h }
+equations_1_25 \sqrt [ 3 ] { V }
+equations_1_44 \frac { 1 } { 1 + \frac { 1 } { x } }
+equations_1_49 \sum _ { n = 1 } ^ \infty \frac { 1 } { n ^ 2 } = \frac { \pi ^ 2 } { 6 }
+equations_1_68 \sqrt { x + \sqrt { x + \sqrt { x } } }
+equations_1_37 \frac { d } { d x } ( x ^ 3 ) = 3 x ^ 2
+equations_1_64 \frac { \sqrt { 1 - v ^ 2 / c ^ 2 } } { 1 + \frac { v } { c } }
+equations_1_40 \sum _ { i = 1 } ^ n i = \frac { n ( n + 1 ) } { 2 }
+equations_1_14 y = 2 x
+equations_1_63 e ^ { i \pi } + 1 = 0
+equations_1_36 \tan ( x ) = \frac { \sin ( x ) } { \cos ( x ) }
+equations_1_03 x _ 1
+equations_1_57 \frac { - b \pm \sqrt { b ^ 2 - 4 a c } } { 2 a }
+equations_1_35 \sin ^ 2 ( \theta ) + \cos ^ 2 ( \theta ) = 1
+equations_1_62 e ^ { i x } = \cos ( x ) + i \sin ( x )
+equations_1_15 f ( x ) = x ^ 2
+equations_1_04 2 x + 5
+equations_1_26 y = 3 x ^ 2 - 2 x + 1
+equations_1_27 x ^ 2 + y ^ 2 = r ^ 2
+equations_1_05 a ^ 2 + b ^ 2
+equations_1_02 a ^ 2
+equations_1_13 | x - 3 |
+equations_1_32 \sqrt { x ^ 2 + 1 }
+equations_1_58 f ( x ) = \frac { 1 } { \sigma \sqrt { 2 \pi } } e ^ { - \frac { ( x - \mu ) ^ 2 } { 2 \sigma ^ 2 } }
+equations_1_07 x ^ 2 - 9
+equations_1_46 \sqrt { x + \sqrt { y } }
+equations_1_12 e ^ x
+equations_1_09 2 \pi r
+equations_1_06 3 x - 4 y + 7
+equations_1_50 \sum _ { k = 0 } ^ \infty a r ^ k = \frac { a } { 1 - r }
+equations_1_19 v = u + a t
+equations_1_41 x = \frac { - b \pm \sqrt { b ^ 2 - 4 a c } } { 2 a }

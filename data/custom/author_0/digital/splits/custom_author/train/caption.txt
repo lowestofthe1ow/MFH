@@ -1,0 +1,5 @@
+equations_1_54 A \cdot ( B \times C )
+equations_1_69 \frac { 1 } { 1 + \frac { 1 } { 1 + \frac { 1 } { x + 1 } } }
+equations_1_00 x
+equations_1_38 \frac { d f } { d x } = 2 x - 5
+equations_1_16 A = \pi r ^ 2
