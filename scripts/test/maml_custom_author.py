@@ -8,8 +8,8 @@ from comer.datamodule import vocab
 from maml_common import run_experiment, BASE_CKPT_PATH, MAML_CKPT_DIR
 
 CUSTOM_CAPTION_PATH = "data/custom/caption.txt"
-CUSTOM_IMG_DIR = "data/custom/author_0/digital"
-MAML_SPLITS_DIR = "data/custom/author_0/digital/splits"
+CUSTOM_IMG_DIR = "data/custom/author_0/physical"
+MAML_SPLITS_DIR = "data/custom/author_0/physical/splits"
 
 
 def parse_args():
@@ -24,7 +24,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def prepare_custom_dataset(caption_path, img_dir, splits_dir):
+def prepare_custom_dataset(caption_path, img_dir, splits_dir, train_size=5):
     if not os.path.exists(caption_path):
         raise FileNotFoundError(f"Missing caption file at: {caption_path}")
     if not os.path.exists(img_dir):
@@ -41,9 +41,6 @@ def prepare_custom_dataset(caption_path, img_dir, splits_dir):
         oov_tokens = [t for t in caption.split() if t not in vocab.word2idx]
         if oov_tokens:
             removed_count += 1
-            print(
-                f"[Info] Removing item index {idx} due to unknown symbols {set(oov_tokens)}: '{caption}'"
-            )
             continue
         paired_data.append((f"equations_1_{idx:02d}", caption))
 
@@ -54,7 +51,7 @@ def prepare_custom_dataset(caption_path, img_dir, splits_dir):
     random.shuffle(paired_data)
 
     n_total = len(paired_data)
-    train_idx = 5  # int(n_total * 0.30)
+    train_idx = train_size  # int(n_total * 0.30)
     val_idx = train_idx + 5  # int(n_total * 0.10)
 
     train_items = paired_data[:train_idx]
@@ -62,7 +59,7 @@ def prepare_custom_dataset(caption_path, img_dir, splits_dir):
     test_items = paired_data[-46:]
 
     print(
-        f"Split distribution -> Train: {len(train_items)} ({len(train_items)/n_total*100:.1f}%) | "
+        f"Train: {len(train_items)} ({len(train_items)/n_total*100:.1f}%) | "
         f"Val: {len(val_items)} ({len(val_items)/n_total*100:.1f}%) | "
         f"Test: {len(test_items)} ({len(test_items)/n_total*100:.1f}%)"
     )
@@ -95,18 +92,25 @@ def prepare_custom_dataset(caption_path, img_dir, splits_dir):
     return [author]
 
 
-def main():
-    args = parse_args()
-    authors = prepare_custom_dataset(args.caption_path, args.img_dir, args.splits_dir)
-    run_experiment(
-        authors,
-        args.splits_dir,
-        "MAML ADAPTATION EXPERIMENT REPORT (CUSTOM AUTHOR)",
-        has_val=True,
-        ckpt_path=args.ckpt_path,
-        ckpt_dir=args.ckpt_dir,
-    )
-
-
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+
+    results = []
+    ablations = [5, 8, 11, 14, 17, 20]
+
+    for train_size in ablations:
+        authors = prepare_custom_dataset(
+            args.caption_path, args.img_dir, args.splits_dir, train_size=train_size
+        )
+
+        result = run_experiment(
+            authors,
+            args.splits_dir,
+            has_val=True,
+            ckpt_path=args.ckpt_path,
+            ckpt_dir=args.ckpt_dir,
+        )
+
+        results.append(result)
+
+    print(results)
