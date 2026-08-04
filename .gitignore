@@ -132,7 +132,7 @@ test_temp
 Results_pred_symlg
 *.tfevents.*
 
-maml_checkpoints/
+finetune_checkpoints/
 
 # TODO: This is temporary for now
 data/custom/author_0/digital/splits/

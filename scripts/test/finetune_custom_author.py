@@ -5,26 +5,28 @@ import argparse
 from PIL import Image
 
 from comer.datamodule import vocab
-from maml_common import run_experiment, BASE_CKPT_PATH, MAML_CKPT_DIR
+from finetune_common import run_experiment, BASE_CKPT_PATH, FINETUNE_CKPT_DIR
 
 CUSTOM_CAPTION_PATH = "data/custom/caption.txt"
 CUSTOM_IMG_DIR = "data/custom/author_0/physical"
-MAML_SPLITS_DIR = "data/custom/author_0/physical/splits"
+FINETUNE_SPLITS_DIR = "data/custom/author_0/physical/splits"
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="MAML adaptation over a custom author dataset"
+        description="finetune adaptation over a custom author dataset"
     )
     parser.add_argument("--caption-path", default=CUSTOM_CAPTION_PATH)
     parser.add_argument("--img-dir", default=CUSTOM_IMG_DIR)
-    parser.add_argument("--splits-dir", default=MAML_SPLITS_DIR)
+    parser.add_argument("--splits-dir", default=FINETUNE_SPLITS_DIR)
     parser.add_argument("--ckpt-path", default=BASE_CKPT_PATH)
-    parser.add_argument("--ckpt-dir", default=MAML_CKPT_DIR)
+    parser.add_argument("--ckpt-dir", default=FINETUNE_CKPT_DIR)
     return parser.parse_args()
 
 
 def prepare_custom_dataset(caption_path, img_dir, splits_dir, train_size=5):
+    """Handles the dataset for author-specific fine-tuning"""
+
     if not os.path.exists(caption_path):
         raise FileNotFoundError(f"Missing caption file at: {caption_path}")
     if not os.path.exists(img_dir):
@@ -32,8 +34,6 @@ def prepare_custom_dataset(caption_path, img_dir, splits_dir, train_size=5):
 
     with open(caption_path, "r", encoding="utf-8") as f:
         raw_captions = [line.strip() for line in f.readlines() if line.strip()]
-
-    print(f"Loaded {len(raw_captions)} total equation expressions from {caption_path}.")
 
     paired_data = []
     removed_count = 0
@@ -44,13 +44,16 @@ def prepare_custom_dataset(caption_path, img_dir, splits_dir, train_size=5):
             continue
         paired_data.append((f"equations_1_{idx:02d}", caption))
 
-    print(
-        f"Filtered out {removed_count} samples containing unknown symbols. Remaining valid samples: {len(paired_data)}."
-    )
+    print("=" * 40)
+
+    # NOTE: I already removed the invalid ones, so this should remove 0 samples.
+    print(f"Removed: {removed_count}\nRemaining: {len(paired_data)}.")
 
     random.shuffle(paired_data)
 
     n_total = len(paired_data)
+
+    # TODO: Decide if we're going to stick with this initial train set size
     train_idx = train_size  # int(n_total * 0.30)
     val_idx = train_idx + 5  # int(n_total * 0.10)
 
@@ -59,10 +62,12 @@ def prepare_custom_dataset(caption_path, img_dir, splits_dir, train_size=5):
     test_items = paired_data[-46:]
 
     print(
-        f"Train: {len(train_items)} ({len(train_items)/n_total*100:.1f}%) | "
-        f"Val: {len(val_items)} ({len(val_items)/n_total*100:.1f}%) | "
-        f"Test: {len(test_items)} ({len(test_items)/n_total*100:.1f}%)"
+        f"Train: {len(train_items)} ({len(train_items)/n_total*100:.1f}%)\n"
+        f"Val:   {len(val_items)} ({len(val_items)/n_total*100:.1f}%)\n"
+        f"Test:  {len(test_items)} ({len(test_items)/n_total*100:.1f}%)"
     )
+
+    print("=" * 40)
 
     author = "custom_author"
 
@@ -70,6 +75,8 @@ def prepare_custom_dataset(caption_path, img_dir, splits_dir, train_size=5):
         shutil.rmtree(splits_dir)
 
     def save_split(split_items, target_dir):
+        """Saves the train/test/validation splits to their own subdirectories"""
+
         os.makedirs(target_dir, exist_ok=True)
         with open(os.path.join(target_dir, "caption.txt"), "w", encoding="utf-8") as f:
             for img_id, caption in split_items:
@@ -96,6 +103,8 @@ if __name__ == "__main__":
     args = parse_args()
 
     results = []
+
+    # TODO: Are we just going to be testing these?
     ablations = [5, 8, 11, 14, 17, 20]
 
     for train_size in ablations:

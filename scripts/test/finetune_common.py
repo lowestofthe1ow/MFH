@@ -16,7 +16,7 @@ from comer.datamodule.datamodule import collate_fn, build_dataset_unzipped
 BASE_CKPT_PATH = (
     "lightning_logs/version_0/checkpoints/epoch=183-step=69183-val_ExpRate=0.6182.ckpt"
 )
-MAML_CKPT_DIR = "maml_checkpoints"
+FINETUNE_CKPT_DIR = "finetune_checkpoints"
 TRAIN_EPOCHS = 20
 BATCH_SIZE = 4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -149,32 +149,33 @@ def adapt_author(
     test_dir,
     val_dir=None,
     ckpt_path=BASE_CKPT_PATH,
-    ckpt_dir=MAML_CKPT_DIR,
+    ckpt_dir=FINETUNE_CKPT_DIR,
 ):
     base_model = load_base_model(ckpt_path)
-    base_acc, base_cer = evaluate_model(base_model, test_dir)
+    base_exprate, base_cer = evaluate_model(base_model, test_dir)
 
-    maml_model = load_base_model(ckpt_path)
+    finetune_model = load_base_model(ckpt_path)
 
     # TODO: Should we be more selective regarding which parameters to freeze/train?
-    for param in maml_model.parameters():
+    for param in finetune_model.parameters():
         param.requires_grad = True
 
-    _bind_adaptation_optimizer(maml_model)
+    _bind_adaptation_optimizer(finetune_model)
 
     dm = AuthorAdaptationDataModule(train_dir, test_dir, val_dir, batch_size=BATCH_SIZE)
-    build_trainer().fit(maml_model, datamodule=dm)
+    build_trainer().fit(finetune_model, datamodule=dm)
 
     torch.save(
-        maml_model.state_dict(), os.path.join(ckpt_dir, f"maml_model_{author}.pth")
+        finetune_model.state_dict(),
+        os.path.join(ckpt_dir, f"finetune_model_{author}.pth"),
     )
-    maml_acc, maml_cer = evaluate_model(maml_model, test_dir)
+    finetune_exprate, finetune_cer = evaluate_model(finetune_model, test_dir)
 
     return {
-        "base_acc": base_acc,
+        "base_exprate": base_exprate,
         "base_cer": base_cer,
-        "maml_acc": maml_acc,
-        "maml_cer": maml_cer,
+        "finetune_exprate": finetune_exprate,
+        "finetune_cer": finetune_cer,
     }
 
 
@@ -183,7 +184,7 @@ def run_experiment(
     splits_dir,
     has_val=False,
     ckpt_path=BASE_CKPT_PATH,
-    ckpt_dir=MAML_CKPT_DIR,
+    ckpt_dir=FINETUNE_CKPT_DIR,
 ):
     os.makedirs(ckpt_dir, exist_ok=True)
     results = {}
@@ -203,6 +204,8 @@ def run_experiment(
             author, train_dir, test_dir, val_dir, ckpt_path=ckpt_path, ckpt_dir=ckpt_dir
         )
 
+    print("-" * 40)
     print(results)
+    print("-" * 40)
 
     return results
