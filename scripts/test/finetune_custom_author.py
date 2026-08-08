@@ -1,13 +1,16 @@
 import os
+import torch
 import shutil
 import random
 import argparse
 from PIL import Image
 
 from comer.datamodule import vocab
-from finetune_common import run_experiment, BASE_CKPT_PATH, FINETUNE_CKPT_DIR
+from comer.lit_comer import LitCoMER
+from scripts.test.finetune_common import evaluate_model, print_worst_samples
+from scripts.test.finetune_common import run_experiment, BASE_CKPT_PATH, FINETUNE_CKPT_DIR
 
-CUSTOM_CAPTION_PATH = "data/custom/caption.txt"
+CUSTOM_CAPTION_PATH = "data/custom/caption_braced.txt"
 CUSTOM_IMG_DIR = "data/custom/author_0/physical"
 FINETUNE_SPLITS_DIR = "data/custom/author_0/physical/splits"
 
@@ -119,7 +122,17 @@ if __name__ == "__main__":
             ckpt_path=args.ckpt_path,
             ckpt_dir=args.ckpt_dir,
         )
-
         results.append(result)
+
+        if train_size == 20:
+            author = authors[0]
+            test_dir = os.path.join(args.splits_dir, author, "test")
+            ckpt_file = os.path.join(args.ckpt_dir, f"finetune_model_{author}.pth")
+
+            model = LitCoMER.load_from_checkpoint(args.ckpt_path, strict=False)
+            model.load_state_dict(torch.load(ckpt_file, map_location="cpu"))
+
+            _, _, samples = evaluate_model(model, test_dir, return_samples=True)
+            print_worst_samples(samples, n=10)
 
     print(results)

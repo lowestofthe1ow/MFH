@@ -68,7 +68,7 @@ class AuthorAdaptationDataModule(pl.LightningDataModule):
         )
 
 
-def evaluate_model(model, data_dir):
+def evaluate_model(model, data_dir, return_samples=False):
     """Provides metrics like ExpRate and average CER"""
 
     dataset = CROHMEDataset(
@@ -82,6 +82,7 @@ def evaluate_model(model, data_dir):
 
     correct_sentences = total_sentences = batches = 0
     total_cer = 0.0
+    samples = []
 
     with torch.no_grad():
         for batch in dataloader:
@@ -94,12 +95,20 @@ def evaluate_model(model, data_dir):
             for pred, target in zip(pred_labels, target_labels):
                 correct_sentences += int(pred == target)
                 total_sentences += 1
+                if return_samples:
+                    sample_cer = cer_metric([pred], [target]).item()
+                    samples.append(
+                        {"expected": target, "predicted": pred, "cer": sample_cer}
+                    )
 
             total_cer += cer_metric(pred_labels, target_labels).item()
             batches += 1
 
     exprate = correct_sentences / total_sentences if total_sentences else 0
     avg_cer = total_cer / batches if batches else 0
+
+    if return_samples:
+        return exprate, avg_cer, samples
     return exprate, avg_cer
 
 
@@ -209,3 +218,12 @@ def run_experiment(
     print("-" * 40)
 
     return results
+
+def print_worst_samples(samples, n=10):
+    """Prints the n samples with the highest (worst) CER"""
+    worst = sorted(samples, key=lambda s: s["cer"], reverse=True)[:n]
+    for i, s in enumerate(worst, 1):
+        print(f"#{i}  CER={s['cer']:.3f}")
+        print(f"   Expected:  {s['expected']}")
+        print(f"   Predicted: {s['predicted']}")
+        print("-" * 40)
