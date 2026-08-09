@@ -5,7 +5,7 @@ import argparse
 from collections import defaultdict
 from tqdm import tqdm
 
-from finetune_common import run_experiment, BASE_CKPT_PATH, FINETUNE_CKPT_DIR
+from scripts.test.finetune_common import run_experiment, BASE_CKPT_PATH, FINETUNE_CKPT_DIR
 
 SOURCE_DATA_DIR = "data/crohme/2016"
 FINETUNE_SPLITS_DIR = "data/crohme/author_splits"

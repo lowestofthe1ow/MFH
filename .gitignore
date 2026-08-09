@@ -136,4 +136,7 @@ finetune_checkpoints/
 
 # TODO: This is temporary for now
 data/custom/author_0/digital/splits/
-data/custom/author_0/physical/splits/
+data/custom/author_0/phys_norush/splits/
+data/custom/author_1/digital/splits/
+data/custom/author_1/phys_norush/splits/
+data/custom/author_1/phys_rush/splits/

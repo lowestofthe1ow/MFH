@@ -37,8 +37,8 @@ e ^ { 2 x } - 3 e ^ { x } + 2 = 0
 \tan ( x ) = \frac { \sin ( x ) } { \cos ( x ) }
 \frac { d } { d x } ( x ^ { 3 } ) = 3 x ^ { 2 }
 \frac { d f } { d x } = 2 x - 5
-\sum _ { k = 1 } ^ { n } k
-\sum _ { i = 1 } ^ { n } i = \frac { n ( n + 1 ) } { 2 }
+\sum \limits _ { k = 1 } ^ { n } k
+\sum \limits _ { i = 1 } ^ { n } i = \frac { n ( n + 1 ) } { 2 }
 x = \frac { - b \pm \sqrt { b ^ { 2 } - 4 a c } } { 2 a }
 \sqrt { \frac { a + b } { c } }
 \frac { \sqrt { x + h } - \sqrt { x } } { h }
@@ -47,8 +47,8 @@ x = \frac { - b \pm \sqrt { b ^ { 2 } - 4 a c } } { 2 a }
 \sqrt { x + \sqrt { y } }
 \sqrt { 1 + \sqrt { 1 + x } }
 \frac { d ^ { 2 } y } { d x ^ { 2 } } + 4 y = 0
-\sum _ { n = 1 } ^ { \infty } \frac { 1 } { n ^ { 2 } } = \frac { \pi ^ { 2 } } { 6 }
-\sum _ { k = 0 } ^ { \infty } a r ^ { k } = \frac { a } { 1 - r }
+\sum \limits _ { n = 1 } ^ { \infty } \frac { 1 } { n ^ { 2 } } = \frac { \pi ^ { 2 } } { 6 }
+\sum \limits _ { k = 0 } ^ { \infty } a r ^ { k } = \frac { a } { 1 - r }
 \sqrt { \frac { x ^ { 2 } - 1 } { x ^ { 2 } + 1 } }
 \frac { a + \sqrt { b } } { c - \sqrt { d } }
 \frac { \frac { a } { b } + \frac { c } { d } } { \frac { a } { b } - \frac { c } { d } }
@@ -58,8 +58,8 @@ A \cdot ( B \times C )
 \frac { - b \pm \sqrt { b ^ { 2 } - 4 a c } } { 2 a }
 f ( x ) = \frac { 1 } { \sigma \sqrt { 2 \pi } } e ^ { - \frac { ( x - \mu ) ^ { 2 } } { 2 \sigma ^ { 2 } } }
 r = \sqrt { x ^ { 2 } + y ^ { 2 } + z ^ { 2 } }
-\frac { 1 } { 1 - x } = \sum _ { n = 0 } ^ { \infty } x ^ { n }
-\cos ( x ) = \sum _ { n = 0 } ^ { \infty } \frac { ( - 1 ) ^ { n } x ^ { 2 n } } { ( 2 n ) ! }
+\frac { 1 } { 1 - x } = \sum \limits _ { n = 0 } ^ { \infty } x ^ { n }
+\cos ( x ) = \sum \limits _ { n = 0 } ^ { \infty } \frac { ( - 1 ) ^ { n } x ^ { 2 n } } { ( 2 n ) ! }
 e ^ { i x } = \cos ( x ) + i \sin ( x )
 e ^ { i \pi } + 1 = 0
 \frac { \sqrt { 1 - v ^ { 2 } / c ^ { 2 } } } { 1 + \frac { v } { c } }
@@ -68,4 +68,4 @@ e ^ { i \pi } + 1 = 0
 \frac { \tan x + \tan y } { 1 - \tan x \tan y } = \tan ( x + y )
 \sqrt { x + \sqrt { x + \sqrt { x } } }
 \frac { 1 } { 1 + \frac { 1 } { 1 + \frac { 1 } { x + 1 } } }
-H ( p ) = - \sum _ { i = 1 } ^ { n } p _ { i } \log _ { 2 } ( p _ { i } )
+H ( p ) = - \sum \limits _ { i = 1 } ^ { n } p _ { i } \log _ { 2 } ( p _ { i } )
