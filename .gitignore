@@ -140,3 +140,10 @@ data/custom/author_0/phys_norush/splits/
 data/custom/author_1/digital/splits/
 data/custom/author_1/phys_norush/splits/
 data/custom/author_1/phys_rush/splits/
+data/crohme_author_splits/
+scripts/crohme_author_verification/
+finetune_checkpoints_crohme/
+freq_analysis_plots/
+adaptation_diagnostics.json
+freq_analysis_results.json
+paired_author_analysis.json
